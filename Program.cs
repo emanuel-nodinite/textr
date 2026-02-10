@@ -1,30 +1,26 @@
 ﻿using emanuel.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Windows.Forms;
+using textr.Components;
 
-namespace emanuel
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.ConfigureTextrServices();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
 {
-    static class Program
-    {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            var services = new ServiceCollection();
-
-            var serviceProvider = services
-                .ConfigureTextrServices()
-                .BuildServiceProvider();
-
-            var form = serviceProvider.GetRequiredService<Form>();
-
-            Application.Run(form);
-        }
-    }
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using StringTransforms.Interfaces;
 using StringTransforms.Services;
-using System.Windows.Forms;
 
 namespace emanuel.Extensions
 {
@@ -13,7 +12,6 @@ namespace emanuel.Extensions
                 .AddSingleton<IEditEventService, EditEventService>()
                 .AddSingleton<ITransformService, TransformService>()
                 .AddSingleton<ITransformFactoryService, TransformFactoryService>()
-                .AddSingleton<IMacroFactoryService, MacroFactoryService>()
-                .AddSingleton<Form, TextTransforms>();
+                .AddSingleton<IMacroFactoryService, MacroFactoryService>();
     }
 }

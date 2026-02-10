@@ -1,0 +1,288 @@
+@page "/"
+@inject ITransformFactoryService TransformFactory
+@inject IMacroFactoryService MacroFactory
+@inject ITransformService TransformService
+@inject IMathService MathService
+@inject IJSRuntime JS
+
+<PageTitle>Textr - Text Transformer</PageTitle>
+
+<div class="container-fluid">
+    <h1>Textr - Text Transformer</h1>
+    
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Input Text</label>
+                <textarea class="form-control font-monospace" rows="15" @bind="mainText" @bind:event="oninput" @onselectionchange="UpdateStatus"></textarea>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Result</label>
+                <textarea class="form-control font-monospace" rows="15" value="@resultText" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Transforms</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Transform List</label>
+                        <select class="form-select" size="5" @bind="selectedTransformIndex">
+                            @{
+                                var transforms = transformCollection.AsDataSource();
+                                for (int i = 0; i < transforms.Count; i++)
+                                {
+                                    var index = i;
+                                    <option value="@index">@transforms[index]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="btn-group mb-3" role="group">
+                        <button class="btn btn-sm btn-danger" @onclick="RemoveSelectedTransform">Remove Selected</button>
+                        <button class="btn btn-sm btn-warning" @onclick="ClearTransforms">Clear All</button>
+                        <button class="btn btn-sm btn-secondary" @onclick="UndoTransform">Undo</button>
+                        <button class="btn btn-sm btn-primary" @onclick="MoveTransformUp">Move Up</button>
+                        <button class="btn btn-sm btn-primary" @onclick="MoveTransformDown">Move Down</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Find & Replace</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control mb-2" placeholder="Find" @bind="findText" @onkeypress="OnFindKeyPress" />
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control mb-2" placeholder="Replace" @bind="replaceText" @onkeypress="OnReplaceKeyPress" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="caseSensitive" @bind="caseSensitive">
+                                <label class="form-check-label" for="caseSensitive">Case Sensitive</label>
+                            </div>
+                            <button class="btn btn-primary btn-sm" @onclick="AddFindReplace">Add Replace</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group me-2 mb-2" role="group">
+                            <button class="btn btn-sm btn-outline-primary" @onclick="RemoveNewLines">Remove New Lines</button>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="RemoveBlankLines">Remove Blank Lines</button>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="Distinct">Distinct</button>
+                        </div>
+                        <div class="btn-group me-2 mb-2" role="group">
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="ToBase64">To Base64</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="FromBase64">From Base64</button>
+                        </div>
+                        <div class="btn-group me-2 mb-2" role="group">
+                            <button class="btn btn-sm btn-outline-info" @onclick="JsonToXml">JSON → XML</button>
+                            <button class="btn btn-sm btn-outline-info" @onclick="XmlToJson">XML → JSON</button>
+                        </div>
+                        <div class="btn-group mb-2" role="group">
+                            <button class="btn btn-sm btn-outline-success" @onclick="ApplyResult">Apply Result</button>
+                            <button class="btn btn-sm btn-outline-success" @onclick="CopyToClipboard">Copy Result</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>SQL Macros</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroListComma">List (Comma)</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroListStringComma">List (String, Comma)</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroSqlSelect">SQL Select Format</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroSqlQuery">SQL Query Format</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroSqlValues">SQL Values</button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="MacroGremlin">Gremlin Format</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <small>@statusText</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string mainText = "";
+    private string resultText = "";
+    private string findText = "";
+    private string replaceText = "";
+    private bool caseSensitive = false;
+    private string statusText = "Ready";
+    private int selectedTransformIndex = -1;
+
+    private ITransformCollection transformCollection = null!;
+
+    protected override void OnInitialized()
+    {
+        transformCollection = TransformService.GetNewTransformCollection();
+        UpdateResult();
+    }
+
+    private void UpdateResult()
+    {
+        resultText = TransformService.ApplyTransforms(transformCollection, mainText);
+        UpdateStatus();
+    }
+
+    private void UpdateStatus()
+    {
+        statusText = $"Input length: {mainText.Length} | Result length: {resultText.Length} | Transforms: {transformCollection.Count}";
+    }
+
+    private void AddTransform(ITransform transform)
+    {
+        TransformService.AddTransform(transform, transformCollection);
+        UpdateResult();
+    }
+
+    private void AddMacro(IEnumerable<ITransform> transforms)
+    {
+        foreach (var transform in transforms)
+        {
+            TransformService.AddTransform(transform, transformCollection);
+        }
+        UpdateResult();
+    }
+
+    private void AddFindReplace()
+    {
+        if (!string.IsNullOrEmpty(findText))
+        {
+            AddTransform(TransformFactory.CreateFindReplaceTransform(findText, replaceText, caseSensitive));
+            findText = "";
+            replaceText = "";
+        }
+    }
+
+    private void OnFindKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddFindReplace();
+        }
+    }
+
+    private void OnReplaceKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddFindReplace();
+        }
+    }
+
+    private void RemoveSelectedTransform()
+    {
+        if (selectedTransformIndex >= 0 && selectedTransformIndex < transformCollection.Count)
+        {
+            transformCollection.GetSelector().SetIndex(selectedTransformIndex);
+            TransformService.RemoveTranform(transformCollection);
+            UpdateResult();
+        }
+    }
+
+    private void ClearTransforms()
+    {
+        TransformService.RemoveAllTransforms(transformCollection);
+        UpdateResult();
+    }
+
+    private void UndoTransform()
+    {
+        TransformService.Undo(transformCollection);
+        UpdateResult();
+    }
+
+    private void MoveTransformUp()
+    {
+        if (selectedTransformIndex >= 0)
+        {
+            transformCollection.GetSelector().SetIndex(selectedTransformIndex);
+            TransformService.MoveSelectedTransform(transformCollection, up: true);
+            UpdateResult();
+        }
+    }
+
+    private void MoveTransformDown()
+    {
+        if (selectedTransformIndex >= 0)
+        {
+            transformCollection.GetSelector().SetIndex(selectedTransformIndex);
+            TransformService.MoveSelectedTransform(transformCollection, up: false);
+            UpdateResult();
+        }
+    }
+
+    private void RemoveNewLines() => AddTransform(TransformFactory.CreateRemoveNewLineTransform());
+    private void RemoveBlankLines() => AddTransform(TransformFactory.CreateRemoveBlankLinesTransform());
+    private void Distinct() => AddTransform(TransformFactory.CreateDistinctTransform());
+    private void ToBase64() => AddTransform(TransformFactory.CreateBase64EncodeTransform());
+    private void FromBase64() => AddTransform(TransformFactory.CreateBase64DecodeTransform());
+    private void JsonToXml() => AddTransform(TransformFactory.CreateJsonXmlTransform(false));
+    private void XmlToJson() => AddTransform(TransformFactory.CreateXmlJsonTransform());
+
+    private void MacroListComma() => AddMacro(MacroFactory.CreateSqlListComma());
+    private void MacroListStringComma() => AddMacro(MacroFactory.CreateSqlListStringComma());
+    private void MacroSqlSelect() => AddMacro(MacroFactory.CreateSqlSelectFormat());
+    private void MacroSqlQuery() => AddMacro(MacroFactory.CreateSqlQueryFormat());
+    private void MacroSqlValues() => AddMacro(MacroFactory.CreateSqlValues());
+    private void MacroGremlin() => AddMacro(MacroFactory.CreateGremlinFormat());
+
+    private void ApplyResult()
+    {
+        mainText = resultText;
+        TransformService.RemoveAllTransforms(transformCollection);
+        UpdateResult();
+    }
+
+    private async Task CopyToClipboard()
+    {
+        if (!string.IsNullOrEmpty(resultText))
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", resultText);
+            statusText = "Copied to clipboard!";
+        }
+    }
+}

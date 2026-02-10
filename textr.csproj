@@ -1,18 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>horse.ico</ApplicationIcon>
     <AssemblyName>textr</AssemblyName>
     <RootNamespace>textr</RootNamespace>
-    <OutputType>WinExe</OutputType>
-    <!-- Preserve 64-bit default target used previously -->
-    <PlatformTarget>x64</PlatformTarget>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="emanuelib\emanuelib.csproj" />
-    <ProjectReference Include="JiraHelper\JiraHelper.csproj" />
     <ProjectReference Include="StringTransforms\StringTransforms.csproj" />
   </ItemGroup>
 
@@ -41,13 +33,21 @@
     <Compile Remove="StringTransforms\**\*.cs" />
     <Compile Remove="textrTests\**\*.cs" />
     <Compile Remove="tools\**\*.cs" />
+    <Compile Remove="TextTransforms.cs" />
+    <Compile Remove="TextTransforms.Designer.cs" />
+    <Compile Remove="BatchEdit.cs" />
+    <Compile Remove="BatchEdit.Designer.cs" />
+    <Compile Remove="Properties\**\*" />
     <EmbeddedResource Remove="StringTransforms\**\*.resx" />
+    <EmbeddedResource Remove="Properties\**\*" />
     <None Remove="StringTransforms\**\*.*" />
+    <None Remove="*.resx" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="App.config" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="horse.ico" />
+    <Content Include="horse.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

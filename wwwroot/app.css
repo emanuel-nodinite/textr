@@ -1,0 +1,37 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+}
+
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.font-monospace {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.btn-toolbar {
+    flex-wrap: wrap;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
