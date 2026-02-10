@@ -14,9 +14,12 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
+else
+{
+    // No HTTPS redirect in development when using HTTP-only URL
+}
 app.UseStaticFiles();
 app.UseAntiforgery();
 

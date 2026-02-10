@@ -26,7 +26,8 @@
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://127.0.0.1:5100;https://127.0.0.1:5101"
-      }
+      },
+      "requireExactSource": false
     }
   ]
 }
