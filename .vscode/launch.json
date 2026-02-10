@@ -10,6 +10,23 @@
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "build",
       "stopAtEntry": false
+    },
+    {
+      "name": "Launch textr (Blazor)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/Debug/net8.0/textr.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://127.0.0.1:5100;https://127.0.0.1:5101"
+      }
     }
   ]
 }

@@ -16,6 +16,61 @@
         "isDefault": true
       },
       "problemMatcher": ["$msCompile"]
+    },
+    {
+      "label": "run blazor",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/textr.csproj"
+      ],
+      "options": {
+        "env": {
+          "ASPNETCORE_URLS": "http://127.0.0.1:5100;https://127.0.0.1:5101"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": ".*"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "\\bNow listening on: .*"
+        }
+      }
+    },
+    {
+      "label": "watch blazor",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/textr.csproj"
+      ],
+      "options": {
+        "env": {
+          "ASPNETCORE_URLS": "http://127.0.0.1:5100;https://127.0.0.1:5101"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": ".*"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "\\bNow listening on: .*"
+        }
+      }
     }
   ]
 }
