@@ -351,7 +351,17 @@
 </div>
 
 @code {
-    private string mainText = "";
+    private string _mainText = "";
+    private string mainText
+    {
+        get => _mainText;
+        set
+        {
+            if (_mainText == value) return;
+            _mainText = value;
+            UpdateResult();
+        }
+    }
     private string resultText = "";
     private string findText = "";
     private string replaceText = "";
@@ -434,13 +444,13 @@
 
     private void UpdateResult()
     {
-        resultText = TransformService.ApplyTransforms(transformCollection, mainText);
+        resultText = TransformService.ApplyTransforms(transformCollection, _mainText);
 
-        if (autoApply && transformCollection.Count > 0 && resultText != mainText)
+        if (autoApply && transformCollection.Count > 0 && resultText != _mainText)
         {
-            mainText = resultText;
+            _mainText = resultText;
             TransformService.RemoveAllTransforms(transformCollection);
-            resultText = mainText;
+            resultText = _mainText;
         }
 
         UpdateStatus();
@@ -719,7 +729,7 @@
 
     private void ApplyResult()
     {
-        mainText = resultText;
+        _mainText = resultText;
         TransformService.RemoveAllTransforms(transformCollection);
         UpdateResult();
     }
