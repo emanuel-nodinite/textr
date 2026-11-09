@@ -46,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="App.config" CopyToOutputDirectory="PreserveNewest" />
     <None Include="horse.ico" />
   </ItemGroup>
 
