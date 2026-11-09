@@ -39,4 +39,22 @@ select 'frienemies:' 'frienemies:', hello, person from frienemies
 
 Jira button gives a few shortcuts to jira commands. Use to easily make a list of attachments, images (with or without thumbnails) or links. mark text in bold/italics using a rich text editor.
 
+## Build and install
+
+Requires the .NET 8 SDK to build, and the .NET 8 Desktop Runtime on the machine that runs it.
+
+Run the tests:
+
+```
+dotnet test textrTests\textrTests.csproj
+```
+
+Publish a release (Release is the default configuration for `dotnet publish` on .NET 8+):
+
+```
+dotnet publish textr.csproj -c Release -o bin\publish
+```
+
+Install by closing textr and copying the contents of `bin\publish` into the install folder, e.g. `C:\Program Files\textr` (needs an elevated prompt).
+
 Horse icon credits: https://thenounproject.com/search/?q=swing%20horse&i=2121526
